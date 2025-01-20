@@ -22,8 +22,8 @@ return new class extends Migration
             $table->foreignId('category_id')->constrained()->onDelete('cascade');
             $table->foreignId('brand_id')->nullable()->constrained()->onDelete('cascade');
             $table->integer('qty')->nullable();
-            $table->string('sku');
-            $table->string('barcode');
+            $table->string('sku')->nullable();
+            $table->string('barcode')->nullable();
             $table->integer('status')->default(1);
             $table->enum('is_featured', ['yes', 'no'])->default('no');
             $table->timestamps();

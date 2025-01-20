@@ -30,7 +30,7 @@ class TempImageController extends Controller
 
 
         $image = $request->file('image');
-        $imageName = time() .'.'. $image->extension();
+        $imageName = time() .'-'. rand() .'.'. $image->extension();
         $image->move(public_path('uploads/temp/'), $imageName);
         $tempImage->name = $imageName;
         $tempImage->save();

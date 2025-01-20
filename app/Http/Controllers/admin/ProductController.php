@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\ProductImage;
 use App\Models\TempImage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -72,6 +73,7 @@ class ProductController extends Controller
             'category' => 'required|integer',
             'sku' => 'required|unique:products,sku',
             'status' => 'required',
+            'is_featured' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -100,12 +102,13 @@ class ProductController extends Controller
         if (!empty($request->gallery)) {
 
             foreach ($request->gallery as $key => $tempImageId) {
+
                 $tempImage = TempImage::find($tempImageId);
 
                 $extArray = explode('.', $tempImage->name);
                 $ext = end($extArray);
 
-                $imageName = $product->id . '-' . time() . '.' . $ext;
+                $imageName = $product->id . '-' . time() . '-'. rand() . '.'. $ext;
 
                 // Large Thumbnai
                 $manager = new ImageManager(Driver::class);
@@ -120,6 +123,11 @@ class ProductController extends Controller
                 $img->save(public_path('uploads/products/small/') . $imageName);
 
 
+                $product_image = new ProductImage();
+                $product_image->image = $imageName;
+                $product_image->product_id = $product->id;
+                $product_image->save();
+
                 if ($key == 0) {
                     $product->image = $imageName;
                     $product->save();
@@ -129,6 +137,7 @@ class ProductController extends Controller
 
         return response()->json([
             'status' => 200,
+            'data' => $product,
             'message' => "Product Created Successfully"
         ], 200);
     }
