@@ -29,9 +29,6 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::put('/brands/{id}', [BrandController::class, 'update']);
     Route::delete('/brands/{id}', [BrandController::class, 'destroy']);
 
-    // Sizes
-    Route::get('/sizes', [SizeController::class, 'index']);
-
 
     // Products Routes
     Route::get('/products', [ProductController::class, 'index']);
@@ -41,7 +38,11 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::delete('/products/{id}', [ProductController::class, 'destroy']);
     Route::get('/get-categories', [ProductController::class, 'getCategories']);
     Route::get('/get-brands', [ProductController::class, 'getBrands']);
-
     Route::post('/temp-images', [TempImageController::class, 'store']);
+    Route::post('/save-product-image', [ProductController::class, 'saveProductImage']);
+    Route::get('/change-product-default-image', [ProductController::class, 'updateDefaultImage']);
+    Route::get('/delete-image-while-update', [ProductController::class, 'removeImageWhileUpdate']);
+
+    Route::get('/sizes', [SizeController::class, 'index']);
 
 });
