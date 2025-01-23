@@ -10,6 +10,7 @@ use App\Models\ProductImage;
 use App\Models\ProductSize;
 use App\Models\TempImage;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
@@ -214,6 +215,18 @@ class ProductController extends Controller
             ], 400);
         }
 
+        if ($product->ProductImages) {
+
+            foreach ($product->ProductImages as $productImage) {
+
+                File::delete(public_path('uploads/products/small/' . $productImage->image));
+                File::delete(public_path('uploads/products/large/' . $productImage->image));
+
+            }
+        }
+
+
+
         $product->delete();
 
         return response()->json([
@@ -316,10 +329,22 @@ class ProductController extends Controller
     }
 
 
-    public function removeImageWhileUpdate(Request $request)
+    public function removeImageWhileUpdate(string $id)
     {
-        $product = ProductImage::find($request->image_id);
-        $product->delete();
+        $productImage = ProductImage::find($id);
+
+        if ($productImage == null) {
+            return response()->json([
+                'status' => 404,
+                'message' => 'Image Not Found'
+            ]);
+        }
+
+        File::delete(public_path('uploads/products/small/' . $productImage->image));
+
+        File::delete(public_path('uploads/products/large/' . $productImage->image));
+
+        $productImage->delete();
 
         return response()->json([
             'status' => 200,

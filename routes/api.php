@@ -6,11 +6,17 @@ use App\Http\Controllers\admin\CategoryController;
 use App\Http\Controllers\admin\ProductController;
 use App\Http\Controllers\admin\SizeController;
 use App\Http\Controllers\admin\TempImageController;
-use Illuminate\Http\Request;
+use App\Http\Controllers\frontend\ProductController as FrontendProductController;
 use Illuminate\Support\Facades\Route;
 
 
 Route::post('/login', [AuthController::class, 'authenticate']);
+
+Route::get('/get-latest-products', [FrontendProductController::class, 'latestProduct']);
+Route::get('/get-featured-products', [FrontendProductController::class, 'featuredProduct']);
+Route::get('/get-all-products', [FrontendProductController::class, 'getAllProducts']);
+Route::get('/categories-by-product', [FrontendProductController::class, 'getCategories']);
+Route::get('/brands-by-products', [FrontendProductController::class, 'getBrands']);
 
 
 Route::group(['middleware' => 'auth:sanctum'], function () {
@@ -41,7 +47,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('/temp-images', [TempImageController::class, 'store']);
     Route::post('/save-product-image', [ProductController::class, 'saveProductImage']);
     Route::get('/change-product-default-image', [ProductController::class, 'updateDefaultImage']);
-    Route::get('/delete-image-while-update', [ProductController::class, 'removeImageWhileUpdate']);
+    Route::get('/delete-image-while-update/{id}', [ProductController::class, 'removeImageWhileUpdate']);
 
     Route::get('/sizes', [SizeController::class, 'index']);
 
