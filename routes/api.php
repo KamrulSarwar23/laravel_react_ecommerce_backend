@@ -17,7 +17,8 @@ Route::get('/get-featured-products', [FrontendProductController::class, 'feature
 Route::get('/get-all-products', [FrontendProductController::class, 'getAllProducts']);
 Route::get('/categories-by-product', [FrontendProductController::class, 'getCategories']);
 Route::get('/brands-by-products', [FrontendProductController::class, 'getBrands']);
-
+Route::get('/products-details/{id}', [FrontendProductController::class, 'productDetails']);
+Route::post('/products-filter-by-category-and-brand', [FrontendProductController::class, 'productFilterByCategoryAndBrand']);
 
 Route::group(['middleware' => 'auth:sanctum'], function () {
 
