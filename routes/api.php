@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\admin\AuthController;
 use App\Http\Controllers\admin\BrandController;
+use App\Http\Controllers\admin\CartController;
 use App\Http\Controllers\admin\CategoryController;
 use App\Http\Controllers\admin\ProductController;
 use App\Http\Controllers\admin\SizeController;
@@ -14,11 +15,19 @@ Route::post('/login', [AuthController::class, 'authenticate']);
 
 Route::get('/get-latest-products', [FrontendProductController::class, 'latestProduct']);
 Route::get('/get-featured-products', [FrontendProductController::class, 'featuredProduct']);
-Route::get('/get-all-products', [FrontendProductController::class, 'getAllProducts']);
+Route::post('/get-all-products', [FrontendProductController::class, 'getAllProducts']);
 Route::get('/categories-by-product', [FrontendProductController::class, 'getCategories']);
 Route::get('/brands-by-products', [FrontendProductController::class, 'getBrands']);
 Route::get('/products-details/{id}', [FrontendProductController::class, 'productDetails']);
-Route::post('/products-filter-by-category-and-brand', [FrontendProductController::class, 'productFilterByCategoryAndBrand']);
+Route::get('/mens-products', [FrontendProductController::class, 'mensProducts']);
+Route::get('/womens-products', [FrontendProductController::class, 'womensProducts']);
+Route::get('/kids-products', [FrontendProductController::class, 'kidsProducts']);
+Route::get('/suggested-products/{id}', [FrontendProductController::class, 'suggestedProducts']);
+
+Route::post('/cart/add', [CartController::class, 'addToCart']);
+Route::get('/cart', [CartController::class, 'getCart']);
+
+
 
 Route::group(['middleware' => 'auth:sanctum'], function () {
 
@@ -49,6 +58,8 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('/save-product-image', [ProductController::class, 'saveProductImage']);
     Route::get('/change-product-default-image', [ProductController::class, 'updateDefaultImage']);
     Route::get('/delete-image-while-update/{id}', [ProductController::class, 'removeImageWhileUpdate']);
+    Route::post('/change-product-status/{id}', [ProductController::class, 'changeProductStatus']);
+    Route::post('/change-product-is_featured/{id}', [ProductController::class, 'changeProductIsFeatured']);
 
     Route::get('/sizes', [SizeController::class, 'index']);
 

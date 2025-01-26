@@ -127,6 +127,13 @@ class BrandController extends Controller
             ], 404);
         }
 
+        if (count($brand->products) > 0) {
+            return response()->json([
+                'status' => 400,
+                'message' => "Can't Delete! This Brand Has Products",
+            ], 400);
+        }
+
         $brand->delete();
 
         return response()->json([

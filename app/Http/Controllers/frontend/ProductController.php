@@ -14,7 +14,7 @@ class ProductController extends Controller
 {
     public function latestProduct()
     {
-        $products = Product::with(['ProductImages', 'ProductSizes'])->where('status', 1)
+        $products = Product::where('status', 1)
             ->orderBy('created_at', 'DESC')
             ->limit(8)
             ->get();
@@ -34,7 +34,7 @@ class ProductController extends Controller
 
     public function featuredProduct()
     {
-        $products = Product::with(['ProductImages', 'ProductSizes'])->where('status', 1)->where('is_featured', 'yes')
+        $products = Product::where('status', 1)->where('is_featured', 'yes')
             ->orderBy('created_at', 'DESC')
             ->limit(8)
             ->get();
@@ -51,11 +51,12 @@ class ProductController extends Controller
         ], 200);
     }
 
-    public function getAllProducts()
-    {
 
-        $products = Product::with(['ProductImages', 'ProductSizes'])->where('status', 1)
-            ->orderBy('created_at', 'DESC')->get();
+    public function mensProducts()
+    {
+        $products = Product::whereHas('category', function ($query) {
+            $query->where('name', 'Mens');
+        })->where('status', 1)->orderBy('created_at', 'DESC')->get();
 
         if ($products->isEmpty()) {
             return response()->json([
@@ -70,30 +71,15 @@ class ProductController extends Controller
     }
 
 
-    public function productFilterByCategoryAndBrand(Request $request)
+    public function womensProducts()
     {
-        $categories = $request->input('categories', []);
-        $brands = $request->input('brands', []);
-
-        $query = Product::query();
-
-        // Filter by categories
-        if (!empty($categories)) {
-            $query->whereIn('category_id', $categories);
-        }
-
-        // Filter by brands
-        if (!empty($brands)) {
-            $query->whereIn('brand_id', $brands);
-        }
-
-        $products = $query->where('status', 1)
-            ->orderBy('created_at', 'DESC')
-            ->get();
+        $products = Product::whereHas('category', function ($query) {
+            $query->where('name', 'Womens');
+        })->where('status', 1)->orderBy('created_at', 'DESC')->get();
 
         if ($products->isEmpty()) {
             return response()->json([
-                'message' => "No products found"
+                'message' => "Product Not Found"
             ], 404);
         }
 
@@ -104,6 +90,87 @@ class ProductController extends Controller
     }
 
 
+    public function kidsProducts()
+    {
+        $products = Product::whereHas('category', function ($query) {
+            $query->where('name', 'Kids');
+        })->where('status', 1)->orderBy('created_at', 'DESC')->get();
+
+        if ($products->isEmpty()) {
+            return response()->json([
+                'message' => "Product Not Found"
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => 200,
+            'data' => $products
+        ], 200);
+    }
+
+    public function suggestedProducts(string $id)
+    {
+
+        $product = Product::find($id);
+
+        if (!$product) {
+            return response()->json([
+                'message' => "Product not found"
+            ], 404);
+        }
+
+        $categoryId = $product->category_id;
+
+        $products = Product::where('category_id', $categoryId)
+            ->where('id', '!=', $id)
+            ->where('status', 1)
+            ->orderBy('created_at', 'DESC')
+            ->limit(4)
+            ->get();
+
+        if ($products->isEmpty()) {
+            return response()->json([
+                'message' => "No suggested products found"
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => 200,
+            'data' => $products
+        ], 200);
+    }
+
+
+
+    public function getAllProducts(Request $request)
+    {
+
+        $categories = $request->input('categories', []);
+        $brands = $request->input('brands', []);
+
+        $query = Product::with(['ProductImages', 'ProductSizes']);
+
+        if (!empty($categories)) {
+            $query->whereIn('category_id', $categories);
+        }
+
+        if (!empty($brands)) {
+            $query->whereIn('brand_id', $brands);
+        }
+
+        $products = $query->where('status', 1)->orderBy('created_at', 'DESC')->paginate(9);
+
+        if ($products->isEmpty()) {
+            return response()->json([
+                'message' => "Product Not Found"
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => 200,
+            'data' => $products
+        ], 200);
+    }
 
     public function productDetails(string $id)
     {

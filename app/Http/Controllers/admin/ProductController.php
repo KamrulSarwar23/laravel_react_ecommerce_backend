@@ -21,7 +21,7 @@ class ProductController extends Controller
 
     public function index()
     {
-        $products = Product::with(['ProductImages', 'ProductSizes'])->orderBy('created_at', 'DESC')->get();
+        $products = Product::with(['ProductImages', 'ProductSizes', 'category', 'brand'])->orderBy('created_at', 'DESC')->paginate(10);
         return response()->json([
             'status' => 200,
             'data' => $products
@@ -57,6 +57,7 @@ class ProductController extends Controller
         $product->short_description = $request->short_description;
         $product->sku = $request->sku;
         $product->qty = $request->qty;
+        $product->colors = $request->colors;    
         $product->barcode = $request->barcode;
         $product->status = $request->status;
         $product->is_featured = $request->is_featured;
@@ -176,6 +177,7 @@ class ProductController extends Controller
         $product->short_description = $request->short_description;
         $product->sku = $request->sku;
         $product->qty = $request->qty;
+        $product->colors = $request->colors;
         $product->barcode = $request->barcode;
         $product->status = $request->status;
         $product->is_featured = $request->is_featured;
@@ -192,7 +194,7 @@ class ProductController extends Controller
                 $productSize->product_id = $product->id;
                 $productSize->save();
             }
-        } elseif(empty($request->sizes)) {
+        } elseif (empty($request->sizes)) {
             ProductSize::where('product_id', $product->id)->delete();
         }
 
@@ -221,7 +223,6 @@ class ProductController extends Controller
 
                 File::delete(public_path('uploads/products/small/' . $productImage->image));
                 File::delete(public_path('uploads/products/large/' . $productImage->image));
-
             }
         }
 
@@ -349,6 +350,32 @@ class ProductController extends Controller
         return response()->json([
             'status' => 200,
             'message' => 'Image Deleted Successfully'
+        ]);
+    }
+
+    public function changeProductStatus(string $id, Request $request)
+    {
+
+        $product = Product::find($id);
+        $product->status = $request->status == true ? 1 : 0;
+        $product->save();
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Status Updated Successfully'
+        ]);
+    }
+
+
+    public function changeProductIsFeatured(string $id, Request $request)
+    {
+        $product = Product::find($id);
+        $product->is_featured = $request->is_featured == true ? 'yes' : 'no';
+        $product->save();
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Status Updated Successfully'
         ]);
     }
 }

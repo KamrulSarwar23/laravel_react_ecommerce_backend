@@ -125,6 +125,13 @@ class CategoryController extends Controller
             ], 404);
         }
 
+        if (count($category->products) > 0) {
+            return response()->json([
+                'status' => 400,
+                'message' => "Can't Delete! This Category Has Products",
+            ], 400);
+        }
+
         $category->delete();
 
         return response()->json([
