@@ -4,15 +4,14 @@ namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
+use Gloudemans\Shoppingcart\Facades\Cart;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 
 class CartController extends Controller
 {
     public function addToCart(Request $request)
     {
-
         $product = Product::find($request->product_id);
 
         $validator = Validator::make($request->all(), [
@@ -34,17 +33,7 @@ class CartController extends Controller
         $size = $request->size;
         $color = $request->color;
 
-        $cart[] = [
-            'id' => $productId,
-            'title' => $product->title,
-            'price' => $product->price,
-            'image' => $product->image_url,
-            'quantity' => $quantity,
-            'size' => $size,
-            'color' => $color,
-        ];
-
-        Session::put('cart', $cart);
+        $cart = Cart::add( $productId, $product->title, $quantity, $product->price, ['size' => $size, 'color' => $color]);
 
         return response()->json([
             'status' => 200,
@@ -55,9 +44,9 @@ class CartController extends Controller
 
     public function getCart()
     {
-        $cart = session()->get('cart');
-
-        return response()->json(['status' => 200, 'cart' => $cart]);
+        $cart = Cart::content();
+        dd($cart);
+        // return response()->json(['status' => 200, 'cart' => $cart]);
     }
 
 }

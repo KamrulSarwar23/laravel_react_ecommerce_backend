@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::post('/login', [AuthController::class, 'authenticate']);
+Route::post('/register', [AuthController::class, 'register']);
 
 Route::get('/get-latest-products', [FrontendProductController::class, 'latestProduct']);
 Route::get('/get-featured-products', [FrontendProductController::class, 'featuredProduct']);
@@ -29,8 +30,16 @@ Route::get('/cart', [CartController::class, 'getCart']);
 
 
 
-Route::group(['middleware' => 'auth:sanctum'], function () {
+Route::middleware('auth:sanctum', 'role:customer')->group(function () {
 
+    Route::get('/customer/logout', [AuthController::class, 'CustomerLogout']);
+
+});
+
+
+Route::middleware(['auth:sanctum', 'role:admin'])->group(function(){
+
+    Route::get('/logout', [AuthController::class, 'logout']);
     // Category Routes
     Route::get('/categories', [CategoryController::class, 'index']);
     Route::post('/categories', [CategoryController::class, 'store']);
@@ -62,5 +71,4 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('/change-product-is_featured/{id}', [ProductController::class, 'changeProductIsFeatured']);
 
     Route::get('/sizes', [SizeController::class, 'index']);
-
 });
