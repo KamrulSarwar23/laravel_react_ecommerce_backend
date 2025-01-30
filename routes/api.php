@@ -4,6 +4,7 @@ use App\Http\Controllers\admin\AuthController;
 use App\Http\Controllers\admin\BrandController;
 use App\Http\Controllers\admin\CartController;
 use App\Http\Controllers\admin\CategoryController;
+use App\Http\Controllers\admin\CustomerAuthController;
 use App\Http\Controllers\admin\ProductController;
 use App\Http\Controllers\admin\SizeController;
 use App\Http\Controllers\admin\TempImageController;
@@ -12,7 +13,8 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::post('/login', [AuthController::class, 'authenticate']);
-Route::post('/register', [AuthController::class, 'register']);
+Route::post('/customer/login', [CustomerAuthController::class, 'customerLogin']);
+Route::post('/register', [CustomerAuthController::class, 'register']);
 
 Route::get('/get-latest-products', [FrontendProductController::class, 'latestProduct']);
 Route::get('/get-featured-products', [FrontendProductController::class, 'featuredProduct']);
@@ -32,14 +34,22 @@ Route::get('/cart', [CartController::class, 'getCart']);
 
 Route::middleware('auth:sanctum', 'role:customer')->group(function () {
 
-    Route::get('/customer/logout', [AuthController::class, 'CustomerLogout']);
+    Route::get('/customer/logout', [CustomerAuthController::class, 'CustomerLogout']);
+    Route::get('/customer/user', [CustomerAuthController::class, 'getCustomer']);
+    Route::put('/customer/profile', [CustomerAuthController::class, 'customerUpdateProfile']);
+    Route::put('/customer/update-password', [CustomerAuthController::class, 'customerUpdatePassword']);
 
 });
 
 
 Route::middleware(['auth:sanctum', 'role:admin'])->group(function(){
 
+
+    Route::get('/admin/user', [AuthController::class, 'getUser']);
+    Route::put('/admin/profile', [AuthController::class, 'updateProfile']);
+    Route::put('/admin/update-password', [AuthController::class, 'updatePassword']);
     Route::get('/logout', [AuthController::class, 'logout']);
+
     // Category Routes
     Route::get('/categories', [CategoryController::class, 'index']);
     Route::post('/categories', [CategoryController::class, 'store']);

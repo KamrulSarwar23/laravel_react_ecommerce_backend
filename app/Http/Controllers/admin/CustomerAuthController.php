@@ -10,10 +10,41 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
-class AuthController extends Controller
+class CustomerAuthController extends Controller
 {
 
-    public function authenticate(Request $request)
+    public function register(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:5|confirmed',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 400,
+                'errors' => $validator->errors()
+            ], 400);
+        }
+
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+        ]);
+
+
+        return response()->json([
+            'status' => 200,
+            'message' => "Registration Successfull",
+            'data' => $user
+        ], 200);
+    }
+
+
+    public function customerLogin(Request $request)
     {
 
         $validator = Validator::make($request->all(), [
@@ -32,7 +63,7 @@ class AuthController extends Controller
 
             $user = User::find(Auth::user()->id);
 
-            if ($user->role == 'admin') {
+            if ($user->role == 'customer') {
                 $token = $user->createToken('token')->plainTextToken;
 
                 return response()->json([
@@ -57,8 +88,10 @@ class AuthController extends Controller
         }
     }
 
-    public function logout(Request $request)
+
+    public function CustomerLogout(Request $request)
     {
+
         $request->user()->tokens()->delete();
 
         return response()->json([
@@ -67,7 +100,8 @@ class AuthController extends Controller
         ], 200);
     }
 
-     public function getUser()
+
+     public function getCustomer()
      {
          $user = Auth::user();
          return response()->json([
@@ -76,7 +110,7 @@ class AuthController extends Controller
         ], 200);
      }
 
-     public function updateProfile(Request $request){
+     public function customerUpdateProfile(Request $request){
 
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
@@ -103,7 +137,7 @@ class AuthController extends Controller
 
      }
 
-     public function updatePassword(Request $request)
+     public function customerUpdatePassword(Request $request)
      {
          $request->validate([
              'currentPassword' => 'required',
