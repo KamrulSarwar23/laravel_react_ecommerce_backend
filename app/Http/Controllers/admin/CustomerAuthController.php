@@ -141,7 +141,7 @@ class CustomerAuthController extends Controller
      {
          $request->validate([
              'currentPassword' => 'required',
-             'newPassword' => 'required|min:6|confirmed',
+             'newPassword' => 'required|min:5|confirmed',
          ]);
 
          $user = Auth::user();

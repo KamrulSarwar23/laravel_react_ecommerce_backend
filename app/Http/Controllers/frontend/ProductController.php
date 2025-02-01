@@ -172,6 +172,7 @@ class ProductController extends Controller
         ], 200);
     }
 
+
     public function productDetails(string $id)
     {
 

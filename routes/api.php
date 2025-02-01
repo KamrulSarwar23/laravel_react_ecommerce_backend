@@ -27,9 +27,6 @@ Route::get('/womens-products', [FrontendProductController::class, 'womensProduct
 Route::get('/kids-products', [FrontendProductController::class, 'kidsProducts']);
 Route::get('/suggested-products/{id}', [FrontendProductController::class, 'suggestedProducts']);
 
-Route::post('/cart/add', [CartController::class, 'addToCart']);
-Route::get('/cart', [CartController::class, 'getCart']);
-
 
 
 Route::middleware('auth:sanctum', 'role:customer')->group(function () {
@@ -39,10 +36,16 @@ Route::middleware('auth:sanctum', 'role:customer')->group(function () {
     Route::put('/customer/profile', [CustomerAuthController::class, 'customerUpdateProfile']);
     Route::put('/customer/update-password', [CustomerAuthController::class, 'customerUpdatePassword']);
 
+
+    Route::post('/cart/add', [CartController::class, 'addToCart']);
+    Route::get('/cart', [CartController::class, 'getCart']);
+    Route::get('/remove/cart/{id}', [CartController::class, 'removeCart']);
+    Route::put('/cart/update', [CartController::class, 'updateCartQuantity']);
+    Route::get('/cart/count', [CartController::class, 'cartCount']);
 });
 
 
-Route::middleware(['auth:sanctum', 'role:admin'])->group(function(){
+Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
 
 
     Route::get('/admin/user', [AuthController::class, 'getUser']);
