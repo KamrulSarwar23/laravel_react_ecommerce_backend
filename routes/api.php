@@ -5,6 +5,7 @@ use App\Http\Controllers\admin\BrandController;
 use App\Http\Controllers\admin\CartController;
 use App\Http\Controllers\admin\CategoryController;
 use App\Http\Controllers\admin\CustomerAuthController;
+use App\Http\Controllers\admin\DashboardController;
 use App\Http\Controllers\admin\ProductController;
 use App\Http\Controllers\admin\SizeController;
 use App\Http\Controllers\admin\TempImageController;
@@ -22,9 +23,7 @@ Route::post('/get-all-products', [FrontendProductController::class, 'getAllProdu
 Route::get('/categories-by-product', [FrontendProductController::class, 'getCategories']);
 Route::get('/brands-by-products', [FrontendProductController::class, 'getBrands']);
 Route::get('/products-details/{id}', [FrontendProductController::class, 'productDetails']);
-Route::get('/mens-products', [FrontendProductController::class, 'mensProducts']);
-Route::get('/womens-products', [FrontendProductController::class, 'womensProducts']);
-Route::get('/kids-products', [FrontendProductController::class, 'kidsProducts']);
+Route::get('/product-by-category/{id}', [FrontendProductController::class, 'categoryProduct']);
 Route::get('/suggested-products/{id}', [FrontendProductController::class, 'suggestedProducts']);
 
 
@@ -53,6 +52,9 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
     Route::put('/admin/update-password', [AuthController::class, 'updatePassword']);
     Route::get('/logout', [AuthController::class, 'logout']);
 
+    Route::get('/user-list', [AuthController::class, 'userList']);
+    Route::get('/dashboard-analytics', [DashboardController::class, 'dashboardAnalytics']);
+
     // Category Routes
     Route::get('/categories', [CategoryController::class, 'index']);
     Route::post('/categories', [CategoryController::class, 'store']);
@@ -66,6 +68,7 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
     Route::get('/brands/{id}', [BrandController::class, 'show']);
     Route::put('/brands/{id}', [BrandController::class, 'update']);
     Route::delete('/brands/{id}', [BrandController::class, 'destroy']);
+
 
 
     // Products Routes

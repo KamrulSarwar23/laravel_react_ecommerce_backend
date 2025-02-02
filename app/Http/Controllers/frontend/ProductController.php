@@ -12,6 +12,28 @@ use function PHPUnit\Framework\isEmpty;
 
 class ProductController extends Controller
 {
+
+    public function categoryProduct(string $id)
+    {
+        $category = Category::find($id);
+
+        if (!$category) {
+            return response()->json([
+                'status' => 404,
+                'message' => 'Category not found'
+            ], 404);
+        }
+
+        $products = $category->products()->paginate(8);
+
+        return response()->json([
+            'status' => 200,
+            'category' => $category->name,
+            'data' => $products
+        ]);
+    }
+
+
     public function latestProduct()
     {
         $products = Product::where('status', 1)
@@ -51,62 +73,6 @@ class ProductController extends Controller
         ], 200);
     }
 
-
-    public function mensProducts()
-    {
-        $products = Product::whereHas('category', function ($query) {
-            $query->where('name', 'Mens');
-        })->where('status', 1)->orderBy('created_at', 'DESC')->get();
-
-        if ($products->isEmpty()) {
-            return response()->json([
-                'message' => "Product Not Found"
-            ], 404);
-        }
-
-        return response()->json([
-            'status' => 200,
-            'data' => $products
-        ], 200);
-    }
-
-
-    public function womensProducts()
-    {
-        $products = Product::whereHas('category', function ($query) {
-            $query->where('name', 'Womens');
-        })->where('status', 1)->orderBy('created_at', 'DESC')->get();
-
-        if ($products->isEmpty()) {
-            return response()->json([
-                'message' => "Product Not Found"
-            ], 404);
-        }
-
-        return response()->json([
-            'status' => 200,
-            'data' => $products
-        ], 200);
-    }
-
-
-    public function kidsProducts()
-    {
-        $products = Product::whereHas('category', function ($query) {
-            $query->where('name', 'Kids');
-        })->where('status', 1)->orderBy('created_at', 'DESC')->get();
-
-        if ($products->isEmpty()) {
-            return response()->json([
-                'message' => "Product Not Found"
-            ], 404);
-        }
-
-        return response()->json([
-            'status' => 200,
-            'data' => $products
-        ], 200);
-    }
 
     public function suggestedProducts(string $id)
     {
@@ -195,7 +161,7 @@ class ProductController extends Controller
 
     public function getCategories()
     {
-        $categories = Category::where('status', 1)->orderBy('created_at', 'DESC')->get();
+        $categories = Category::where('status', 1)->orderBy('created_at', 'asc')->get();
 
         if ($categories->isEmpty()) {
             return response()->json([

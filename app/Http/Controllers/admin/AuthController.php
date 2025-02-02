@@ -129,4 +129,15 @@ class AuthController extends Controller
              'message' => 'Password updated successfully.',
          ]);
      }
+
+     public function userList(){
+
+        $userlist = User::where('role', 'customer')->get();
+
+        return response()->json([
+            'status' => 200,
+            'data' => $userlist
+        ]);
+
+     }
 }
