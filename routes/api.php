@@ -19,9 +19,9 @@ Route::post('/register', [CustomerAuthController::class, 'register']);
 
 Route::get('/get-latest-products', [FrontendProductController::class, 'latestProduct']);
 Route::get('/get-featured-products', [FrontendProductController::class, 'featuredProduct']);
-Route::post('/get-all-products', [FrontendProductController::class, 'getAllProducts']);
 Route::get('/categories-by-product', [FrontendProductController::class, 'getCategories']);
 Route::get('/brands-by-products', [FrontendProductController::class, 'getBrands']);
+Route::get('/get-all-products', [FrontendProductController::class, 'getAllProducts']);
 Route::get('/products-details/{id}', [FrontendProductController::class, 'productDetails']);
 Route::get('/product-by-category/{id}', [FrontendProductController::class, 'categoryProduct']);
 Route::get('/suggested-products/{id}', [FrontendProductController::class, 'suggestedProducts']);

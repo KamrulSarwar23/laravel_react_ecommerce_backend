@@ -13,6 +13,63 @@ use function PHPUnit\Framework\isEmpty;
 class ProductController extends Controller
 {
 
+
+    public function getCategories()
+    {
+        $categories = Category::where('status', 1)->orderBy('name', 'ASC')->get();
+
+        return response()->json([
+            'status' => 200,
+            'data' => $categories
+        ], 200);
+    }
+
+
+    public function getBrands()
+    {
+        $brands = Brand::where('status', 1)->orderBy('name', 'ASC')->get();
+
+        return response()->json([
+            'status' => 200,
+            'data' => $brands
+        ], 200);
+    }
+
+
+    public function getAllProducts(Request $request)
+    {
+
+
+        $products = Product::where('status', 1)->orderBy('created_at', 'DESC');
+
+
+        if (!empty($request->category)) {
+
+            $categoryArray = explode(',', $request->category);
+
+            $products->whereIn('category_id', $categoryArray);
+
+        }
+
+        if (!empty($request->brand)) {
+
+            $brandArray = explode(',', $request->brand);
+
+            $products->whereIn('brand_id', $brandArray);
+
+        }
+
+        $products = $products->paginate(9);
+
+
+        return response()->json([
+            'status' => 200,
+            'data' => $products
+        ], 200);
+    }
+
+
+
     public function categoryProduct(string $id)
     {
         $category = Category::find($id);
@@ -108,37 +165,6 @@ class ProductController extends Controller
 
 
 
-    public function getAllProducts(Request $request)
-    {
-
-        $categories = $request->input('categories', []);
-        $brands = $request->input('brands', []);
-
-        $query = Product::with(['ProductImages', 'ProductSizes']);
-
-        if (!empty($categories)) {
-            $query->whereIn('category_id', $categories);
-        }
-
-        if (!empty($brands)) {
-            $query->whereIn('brand_id', $brands);
-        }
-
-        $products = $query->where('status', 1)->orderBy('created_at', 'DESC')->paginate(9);
-
-        if ($products->isEmpty()) {
-            return response()->json([
-                'message' => "Product Not Found"
-            ], 404);
-        }
-
-        return response()->json([
-            'status' => 200,
-            'data' => $products
-        ], 200);
-    }
-
-
     public function productDetails(string $id)
     {
 
@@ -156,42 +182,6 @@ class ProductController extends Controller
         return response()->json([
             'status' => 200,
             'data' => $productDetails
-        ], 200);
-    }
-
-    public function getCategories()
-    {
-        $categories = Category::where('status', 1)->orderBy('created_at', 'asc')->get();
-
-        if ($categories->isEmpty()) {
-            return response()->json([
-                'status' => 400,
-                'message' => 'Category Not Found'
-            ], 400);
-        }
-
-        return response()->json([
-            'status' => 200,
-            'data' => $categories
-        ], 200);
-    }
-
-
-    public function getBrands()
-    {
-        $brands = Brand::where('status', 1)->orderBy('created_at', 'DESC')->get();
-
-
-        if ($brands->isEmpty()) {
-            return response()->json([
-                'status' => 400,
-                'message' => 'Brand Not Found'
-            ], 400);
-        }
-
-        return response()->json([
-            'status' => 200,
-            'data' => $brands
         ], 200);
     }
 }
