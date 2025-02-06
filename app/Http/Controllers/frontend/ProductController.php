@@ -39,9 +39,7 @@ class ProductController extends Controller
     public function getAllProducts(Request $request)
     {
 
-
         $products = Product::where('status', 1)->orderBy('created_at', 'DESC');
-
 
         if (!empty($request->category)) {
 

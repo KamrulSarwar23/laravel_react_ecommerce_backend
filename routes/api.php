@@ -9,6 +9,7 @@ use App\Http\Controllers\admin\DashboardController;
 use App\Http\Controllers\admin\ProductController;
 use App\Http\Controllers\admin\SizeController;
 use App\Http\Controllers\admin\TempImageController;
+use App\Http\Controllers\frontend\OrderController;
 use App\Http\Controllers\frontend\ProductController as FrontendProductController;
 use Illuminate\Support\Facades\Route;
 
@@ -41,6 +42,8 @@ Route::middleware('auth:sanctum', 'role:customer')->group(function () {
     Route::get('/remove/cart/{id}', [CartController::class, 'removeCart']);
     Route::put('/cart/update', [CartController::class, 'updateCartQuantity']);
     Route::get('/cart/count', [CartController::class, 'cartCount']);
+
+    Route::post('/place/order', [OrderController::class, 'placeOrder']);
 });
 
 
