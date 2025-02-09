@@ -127,6 +127,15 @@ class CartController extends Controller
             ->where('product_id', $request->product_id)
             ->first();
 
+        $product = Product::where('id', $request->product_id)->first();
+
+        if ($product->qty < $request->quantity) {
+            return response()->json([
+                'status' => 401,
+                'message' => 'Quantity Not Available',
+            ]);
+        }
+
         if ($cartItem) {
             $cartItem->quantity = $request->quantity;
             $cartItem->save();

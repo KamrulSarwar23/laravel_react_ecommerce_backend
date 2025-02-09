@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\AddToCart;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\Product;
 use App\Models\ShippingAddress;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
@@ -16,7 +17,7 @@ use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
-    public function placeOrder(Request $request)
+    public function CashOnDelivery(Request $request)
     {
         // Start the transaction
         DB::beginTransaction();
@@ -68,8 +69,8 @@ class OrderController extends Controller
             $order->amount = $totalPayable;
             $order->product_qty = $productQty;
             $order->payment_method = $request->payment_method;
-            $order->payment_status = $request->payment_status;
-            $order->order_status = $request->order_status;
+            $order->payment_status = 0;
+            $order->order_status = 'pending';
             $order->save();
 
             // Create the shipping address
@@ -90,7 +91,16 @@ class OrderController extends Controller
                 $itemOrder->product_name = $product->title;
                 $itemOrder->unit_price = $product->price;
                 $itemOrder->qty = $product->quantity;
+                $itemOrder->image = $product->image;
                 $itemOrder->save();
+
+                $manageQty = Product::where('id', $product->product_id)->get();
+
+               foreach ($manageQty as $productQty) {
+                $productQty->qty = $productQty->qty - $product->quantity;
+                $productQty->save();
+            }
+
             }
 
             // Create a transaction record
@@ -100,6 +110,11 @@ class OrderController extends Controller
             $transaction->payment_method = $request->payment_method;
             $transaction->amount = $totalPayable;
             $transaction->save();
+
+
+            foreach ($cartProducts  as $product) {
+                $product->delete();
+            }
 
             // Commit the transaction
             DB::commit();
@@ -119,6 +134,29 @@ class OrderController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
+    }
+
+
+    public function CustomerOrderList()
+    {
+        $orderList = Order::where('user_id', Auth::user()->id)->orderBy('created_at', 'DESC')->get();
+
+        return response()->json([
+            'status' => 200,
+            'data' => $orderList
+        ]);
+    }
+
+
+    public function CustomerInvoice(string $id)
+    {
+
+        $orderItems = Order::with('orderItems')->where('user_id', Auth::user()->id)->find($id);
+
+        return response()->json([
+            'status' => 200,
+            'data' => $orderItems
+        ]);
     }
 
 }

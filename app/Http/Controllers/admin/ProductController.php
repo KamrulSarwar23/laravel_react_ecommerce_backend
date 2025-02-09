@@ -57,7 +57,7 @@ class ProductController extends Controller
         $product->short_description = $request->short_description;
         $product->sku = $request->sku;
         $product->qty = $request->qty;
-        $product->colors = $request->colors;    
+        $product->colors = $request->colors;
         $product->barcode = $request->barcode;
         $product->status = $request->status;
         $product->is_featured = $request->is_featured;

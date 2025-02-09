@@ -130,14 +130,4 @@ class AuthController extends Controller
          ]);
      }
 
-     public function userList(){
-
-        $userlist = User::where('role', 'customer')->get();
-
-        return response()->json([
-            'status' => 200,
-            'data' => $userlist
-        ]);
-
-     }
 }

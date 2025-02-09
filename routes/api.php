@@ -43,7 +43,12 @@ Route::middleware('auth:sanctum', 'role:customer')->group(function () {
     Route::put('/cart/update', [CartController::class, 'updateCartQuantity']);
     Route::get('/cart/count', [CartController::class, 'cartCount']);
 
-    Route::post('/place/order', [OrderController::class, 'placeOrder']);
+    Route::post('/pay-with-cash-on-delivery', [OrderController::class, 'CashOnDelivery']);
+
+    Route::get('/customer-order-list', [OrderController::class, 'CustomerOrderList']);
+    Route::get('/customer-invoice/{id}', [OrderController::class, 'CustomerInvoice']);
+
+
 });
 
 
@@ -55,7 +60,15 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
     Route::put('/admin/update-password', [AuthController::class, 'updatePassword']);
     Route::get('/logout', [AuthController::class, 'logout']);
 
-    Route::get('/user-list', [AuthController::class, 'userList']);
+    Route::get('/user-list', [DashboardController::class, 'userList']);
+    Route::get('/order-list', [DashboardController::class, 'OrderList']);
+    Route::get('/transaction-list', [DashboardController::class, 'TransactionList']);
+    Route::get('/invoice/{id}', [DashboardController::class, 'Invoice']);
+
+    Route::put('/change-payment-status/{id}', [DashboardController::class, 'ChangePaymentStatus']);
+
+    Route::put('/change-order-status/{id}', [DashboardController::class, 'ChangeOrderStatus']);
+
     Route::get('/dashboard-analytics', [DashboardController::class, 'dashboardAnalytics']);
 
     // Category Routes
