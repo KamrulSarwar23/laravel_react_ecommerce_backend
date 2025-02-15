@@ -78,6 +78,10 @@ class DashboardController extends Controller
         $order->payment_status = $order->payment_status == 0 ? 1 : 0;
         $order->save();
 
+        $transaction = Transaction::where('order_id', $id)->first();
+        $transaction->payment_status = $transaction->payment_status == 0 ? 1 : 0;
+        $transaction->save();
+
         return response()->json([
             'status' => 200,
             'message' => "Payment Status Changed"

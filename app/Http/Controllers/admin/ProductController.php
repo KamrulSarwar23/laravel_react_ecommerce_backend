@@ -7,6 +7,7 @@ use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductImage;
+use App\Models\ProductReview;
 use App\Models\ProductSize;
 use App\Models\TempImage;
 use Illuminate\Http\Request;
@@ -18,6 +19,29 @@ use Intervention\Image\Drivers\Gd\Driver;
 
 class ProductController extends Controller
 {
+
+    public function ProductReview()
+    {
+
+        $reviews = ProductReview::orderBy('created_at', 'DESC')->get();
+
+        return response()->json([
+            'status' => 200,
+            'data' =>  $reviews,
+        ], 200);
+    }
+
+    public function DeleteReview(string $id)
+    {
+
+        $review = ProductReview::find($id);
+        $review->delete();
+
+        return response()->json([
+            'status' => 200,
+        ], 200);
+    }
+
 
     public function index()
     {

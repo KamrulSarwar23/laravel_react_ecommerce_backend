@@ -15,6 +15,12 @@ return new class extends Migration
             $table->id();
             $table->foreignId('order_id')->constrained()->onDelete('cascade');
             $table->string('address');
+            $table->string('name');
+            $table->string('email');
+            $table->string('city');
+            $table->string('state')->nullable();
+            $table->integer('zipcode')->nullable();
+            $table->string('phone');
             $table->timestamps();
         });
     }

@@ -22,6 +22,7 @@ return new class extends Migration
             $table->foreignId('category_id')->constrained()->onDelete('cascade');
             $table->foreignId('brand_id')->nullable()->constrained()->onDelete('cascade');
             $table->integer('qty')->nullable();
+            $table->json('colors')->nullable();
             $table->string('sku')->nullable();
             $table->string('barcode')->nullable();
             $table->integer('status')->default(1);

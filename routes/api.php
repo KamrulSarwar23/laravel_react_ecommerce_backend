@@ -7,10 +7,12 @@ use App\Http\Controllers\admin\CategoryController;
 use App\Http\Controllers\admin\CustomerAuthController;
 use App\Http\Controllers\admin\DashboardController;
 use App\Http\Controllers\admin\ProductController;
+use App\Http\Controllers\admin\ShippingMethodController;
 use App\Http\Controllers\admin\SizeController;
 use App\Http\Controllers\admin\TempImageController;
 use App\Http\Controllers\frontend\OrderController;
 use App\Http\Controllers\frontend\ProductController as FrontendProductController;
+use App\Http\Controllers\frontend\ProductReviewController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -26,6 +28,7 @@ Route::get('/get-all-products', [FrontendProductController::class, 'getAllProduc
 Route::get('/products-details/{id}', [FrontendProductController::class, 'productDetails']);
 Route::get('/product-by-category/{id}', [FrontendProductController::class, 'categoryProduct']);
 Route::get('/suggested-products/{id}', [FrontendProductController::class, 'suggestedProducts']);
+Route::get('/product-review-list/{id}', [ProductReviewController::class, 'ReviewList']);
 
 
 
@@ -43,12 +46,16 @@ Route::middleware('auth:sanctum', 'role:customer')->group(function () {
     Route::put('/cart/update', [CartController::class, 'updateCartQuantity']);
     Route::get('/cart/count', [CartController::class, 'cartCount']);
 
-    Route::post('/pay-with-cash-on-delivery', [OrderController::class, 'CashOnDelivery']);
-
     Route::get('/customer-order-list', [OrderController::class, 'CustomerOrderList']);
     Route::get('/customer-invoice/{id}', [OrderController::class, 'CustomerInvoice']);
 
+    Route::post('/pay-with-cash-on-delivery', [OrderController::class, 'CashOnDelivery']);
+    Route::post('/pay-with-stripe', [OrderController::class, 'stripePayment']);
+    Route::post('/verify-payment', [OrderController::class, 'verifyPayment']);
 
+    Route::get('/get-shipping', [OrderController::class, 'getShipping']);
+
+    Route::post('/product-review-submit/{id}', [ProductReviewController::class, 'StoreReview']);
 });
 
 
@@ -86,6 +93,12 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
     Route::delete('/brands/{id}', [BrandController::class, 'destroy']);
 
 
+     // Category Routes
+     Route::get('/shipping', [ShippingMethodController::class, 'index']);
+     Route::post('/shipping', [ShippingMethodController::class, 'store']);
+     Route::get('/shipping/{id}', [ShippingMethodController::class, 'show']);
+     Route::put('/shipping/{id}', [ShippingMethodController::class, 'update']);
+     Route::delete('/shipping/{id}', [ShippingMethodController::class, 'destroy']);
 
     // Products Routes
     Route::get('/products', [ProductController::class, 'index']);
@@ -103,4 +116,7 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
     Route::post('/change-product-is_featured/{id}', [ProductController::class, 'changeProductIsFeatured']);
 
     Route::get('/sizes', [SizeController::class, 'index']);
+
+    Route::get('/product-reviews', [ProductController::class, 'ProductReview']);
+    Route::delete('/remove-product-review/{id}', [ProductController::class, 'DeleteReview']);
 });

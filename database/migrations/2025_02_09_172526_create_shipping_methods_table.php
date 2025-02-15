@@ -11,8 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('add_to_carts', function (Blueprint $table) {
-            $table->string('image')->nullable()->after('size');
+        Schema::create('shipping_methods', function (Blueprint $table) {
+            $table->id();
+            $table->string('method');
+            $table->integer('amount');
+            $table->timestamps();
         });
     }
 
@@ -21,8 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('add_to_carts', function (Blueprint $table) {
-            //
-        });
+        Schema::dropIfExists('shipping_methods');
     }
 };
