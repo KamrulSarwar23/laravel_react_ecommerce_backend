@@ -31,7 +31,6 @@ Route::get('/suggested-products/{id}', [FrontendProductController::class, 'sugge
 Route::get('/product-review-list/{id}', [ProductReviewController::class, 'ReviewList']);
 
 
-
 Route::middleware('auth:sanctum', 'role:customer')->group(function () {
 
     Route::get('/customer/logout', [CustomerAuthController::class, 'CustomerLogout']);
@@ -50,12 +49,17 @@ Route::middleware('auth:sanctum', 'role:customer')->group(function () {
     Route::get('/customer-invoice/{id}', [OrderController::class, 'CustomerInvoice']);
 
     Route::post('/pay-with-cash-on-delivery', [OrderController::class, 'CashOnDelivery']);
-    Route::post('/pay-with-stripe', [OrderController::class, 'stripePayment']);
-    Route::post('/verify-payment', [OrderController::class, 'verifyPayment']);
+
 
     Route::get('/get-shipping', [OrderController::class, 'getShipping']);
 
     Route::post('/product-review-submit/{id}', [ProductReviewController::class, 'StoreReview']);
+
+
+    Route::post('/payment/initiate', [OrderController::class, 'initiatePayment']);
+    Route::post('/payment/success', [OrderController::class, 'successPayment']);
+    Route::post('/payment/fail', [OrderController::class, 'failPayment']);
+    Route::post('/payment/cancel', [OrderController::class, 'cancelPayment']);
 });
 
 
