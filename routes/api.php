@@ -55,11 +55,6 @@ Route::middleware('auth:sanctum', 'role:customer')->group(function () {
 
     Route::post('/product-review-submit/{id}', [ProductReviewController::class, 'StoreReview']);
 
-
-    Route::post('/payment/initiate', [OrderController::class, 'initiatePayment']);
-    Route::post('/payment/success', [OrderController::class, 'successPayment']);
-    Route::post('/payment/fail', [OrderController::class, 'failPayment']);
-    Route::post('/payment/cancel', [OrderController::class, 'cancelPayment']);
 });
 
 

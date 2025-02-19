@@ -14,9 +14,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
-use Stripe\Stripe;
-use Stripe\Checkout\Session;
-use Stripe\Charge;
 
 
 class OrderController extends Controller
@@ -164,10 +161,6 @@ class OrderController extends Controller
             ], 500);
         }
     }
-
-
-
-
 
     public function CustomerOrderList()
     {
